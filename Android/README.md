@@ -61,15 +61,43 @@ class AppiumSetup(unittest.TestCase):
 
 ```python
 class {page ex : SignupPage}(object):
-	
-	# {element 이름} = {element_id} or {element_xpath} 
-	⬇ ex) element_id 	
-	sub_title = 'com.airklass.airklass:id/tv_sign_up_agreement_subtitle'
-  header_title = 'com.airklass.airklass:id/tv_sign_up_agreement_title'
-	⬇ ex) element_xpath
-	announcement_item = '/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.view.ViewGroup/android.widget.ScrollView/android.view.ViewGroup/android.widget.ScrollView/android.widget.LinearLayout/android.widget.FrameLayout/android.view.ViewGroup/android.widget.FrameLayout/android.view.ViewGroup/androidx.recyclerview.widget.RecyclerView[1]/android.widget.FrameLayout'
-```
+	def __init__(self, driver):
+	        self.driver = driver
+		# {element 이름} = {element_id} or {element_xpath} 
+		⬇ ex) element_id 	
+		sub_title = (Mobile.ID, 'com.airklass.airklass:id/tv_sign_up_agreement_subtitle')
+	  	header_title = (MobileBy.ID, 'com.airklass.airklass:id/tv_sign_up_agreement_title')
+		⬇ ex) element_xpath
+		announcement_item = (MobileBy.XPATH, '/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.view.ViewGroup/android.widget.ScrollView/android.view.ViewGroup/android.widget.ScrollView/android.widget.LinearLayout/android.widget.FrameLayout/android.view.ViewGroup/android.widget.FrameLayout/android.view.ViewGroup/androidx.recyclerview.widget.RecyclerView[1]/android.widget.FrameLayout')
+	```
 
+	def SignupStep1Wait(self):
+        """
+        회원가입 페이지 로드가 완료 될때까지 대기합니다.
+        """
+        	return WebDriverWait(self.driver, 10).until(EC.presence_of_element_located(self.sub_title))
+
+ 	def AgreementCkbClick(self, cnt):
+        """
+        회원가입 1단계 페이지의 checkbox(약관 동의)를 cnt를 지정하여 클릭하는 메소드입니다.\n
+        cnt 값은 필수로 입력하여야 하며, 아래와같이 cnt를 선언하여 클릭 후, 해당 페이지의 모든 checkbox(총5개)의 check 여부 상태값을 리턴합니다.\n
+        cnt=0 : 네 모두 동의합니다. 클릭 / cnt=1 : (필수) 만 14세 이상입니다. 클릭 / cnt=2 : (필수) 서비스 이용약관 동의 클릭 / cnt=3 : (필수) 개인정보처리방침 동의 클릭 / cnt=4 : (선택) 마케팅 정보 수신 동의 클릭
+        """
+	        try:
+	            sleep(0.5)
+	            all_agreement_ckb = self.driver.find_elements(*self.agreement_ckb)
+	            sleep(0.5)
+	            all_agreement_ckb[cnt].click()
+	
+	            under_agreement_ckb_statsu = []
+	            under_agreement_ckb = self.driver.find_elements(*self.agreement_ckb)
+	            for i in range(len(under_agreement_ckb)):
+	                under_agreement_ckb_statsu.append(under_agreement_ckb[i].is_selected())
+	            
+	            return under_agreement_ckb_statsu
+	        except:
+	            print('네, 모두 동의합니다 체크 박스 클릭 시 하위 내용을 체크 유무 확인에 실패하였습니다.')
+	            return False
 ### Scripts 구조(ex : 회원가입 페이지)
 
 - **AAA 구조 기준으로 작성**
@@ -93,115 +121,116 @@ from Src.PageObject.Pages.Locators_Settings import SettingsPage
 from Src.PageObject.Pages.Locators_Login import Login
 import unittest
 
-class SignupFullTest(AppiumSetup):
-	test_reault = True
-	pin_code = None
+TIME = datetime.datetime.today().strftime("%Y%m%d%H%M%S")
 
-	def test_case_001(self):
-		print('이메일로 회원가입 - 1단계 페이지 구성')
-    expected_result = [
-			'해더 타이틀 출력 : True',
-			'서브 타이틀 출력 : True',
-			'약관 동의 체크박스 출력 : True',
-			'다음 버튼 출력 : True'
-		]
-		check_list = ['안녕하세요!\n약관에 동의해 주세요', '이메일로 회원가입', '네, 모두 동의합니다.', '다음']
-		check_result = []
-    unit_result = []
-	
-		try:
-			⬇ 준비(Arrange)
-			#우측 더보기 버튼이 출력될때까지 wait 후 우측 더 보기 버튼을 클릭 합니다.
-      gnb_right_menu = self.driver.find_element(Appium.XPATH, Home.gnb_right_menu)
-			gnb_right_menu.click()
-			#좌측 메뉴 Bar의 로그인/회원가입 버튼을 클릭 합니다.
-      right_menu_welcome = self.driver.find_element(AppiumBy.XPATH, Home.right_menu_welcome).click()
-			right_menu_welcome,click()
-			#웰컴 페이지에서 진입할때까지 대기
-      BaseFunction(self.driver).waittings(AppiumBy.ID, WelecomPage.element)
-			#웰컴 페이지에서 "이메일 계정으로 시작하기" 버튼 클릭
-      email_login_btn = self.driver.find_element(AppiumBy.ID, WelecomPage.email_login).click()
-      email_login_btn.click()
-			#로그인페이지 진입이 완료 될때까지 대기
-			BaseFunction(self.driver).waittings(AppiumBy.ID, Login.header_title)
-			#키패드를 숨김처리
-			self.driver.hide_keyboard()
-			#로그인 페이지 하단에 "이메일로 회원가입" 버튼 클릭
-			signup_btn = self.driver.find_element(AppiumBy.ID, Login.signup_btn)
-			signup_btn.click()
-			
-			⬇ 실행(Act)
-			#회원가입 페이지 1단계 진입이 완료 될때까지 대기
-			BaseFunction(self.driver).waittings(AppiumBy.ID, SignupPage.header_title)
-			#회원가입 1단계 페이지의 구성 요소의 텍스트를 모두 가져옵니다.
-			for i, element in enumerate([
-				SignupPage.header_title,
-				SignupPage.sub_title,
-				SignupPage.all_agree_ckb,
-				SignupPage.next_btn
-			]):	
-				get_text = self.driver.find_element(Appium.ID, element).text
-					check_result.append(get_text)
-				if check_list[i] == get_text:
-					unit_result.append(True)
-				else:
-					unit_result.append(False)
+class SignupFullTest(WebDriverSetup):
+    PIN_CODE = None
+    EMAIL = 'quriouslyqa+{}@gmail.com'.format(TIME)
+    PW = '11111aaaaa'
+    NAME = "PC웹-QA-자동화"
 
-			print('예상값 : {} \n가져온 값 : {}'.format(check_list, check_result))
-		except:
-			TestOutput(self.driver).resoult_output(self.__class__.__name__,'==', expected_result, None)
-			SignupFullTest.test_result = False
-      self.assertTrue(False)
-		try:
-			⬇ 검증(Assert)
-			result = [
-				'해더 타이틀 출력 : {}'.format(unit_result[0]),
-				'서브 타이틀 출력 : {}'.format(unit_result[1]),
-				'약관 동의 체크박스 출력 : {}'.format(unit_result[2]),
-				'다음 버튼 출력 : {}'.format(unit_result[3])
-			]
-      self.assertEqual(expected_result, result)
-      TestOutput(self.driver).resoult_output(self.__class__.__name__,'==', expected_result, result)  
-     except:
-       TestOutput(self.driver).resoult_output(self.__class__.__name__,'==', expected_result, result)
-       self.assertEqual(expected_result, result)
 
-	def test_case_002(self):
-		print('이메일로 회원가입 - 약관 - 모두 동의하지 않는 경우)
-		if SignupFullTest.test_result == False:
-			unittest.skip("이전 테스트 케이스 실패로 인하여 제외합니다.")
-		expected_result = ['다음 버튼이 비활성화 상태르 유지 : True']
-		
-		try:
-			⬇ 실행(Act)
-			next_btn_state = self.driver.find_element(Appium.ID, SignupPage.next_btn).get_attritube('enabled')
-			if 'false' == next_btn_state:
-				unit_result = True
-			else:
-				unit_result = False		
-		except:
-			TestOutput(self.driver).resoult_output(self.__class__.__name__,'==', expected_result, None)
-      self.assertTrue(False)
-		try:
-			⬇ 검증(Assert)
-			result = ['다음 버튼이 비활성화 상태르 유지 : {}'.format(unit_result)]
-      self.assertEqual(expected_result, result)
-      TestOutput(self.driver).resoult_output(self.__class__.__name__,'==', expected_result, result)  
-     except:
-       TestOutput(self.driver).resoult_output(self.__class__.__name__,'==', expected_result, result)
-       self.assertEqual(expected_result, result)
+    def test_case_001(self):
+        print('회원가입 - 1단계(약간동의) - 약관 동의 페이지 구성')
+        expected_result = [
+            'Sub Title = 이메일로 회원가입 : True',
+            'Header Title = 안녕하세요!\n약관에 동의해 주세요 : True',
+            '[ ] 네, 모두 동의합니다. : True',
+            '[ ](필수) 만 14세 이상입니다. : True',
+            '[ ](필수) 서비스 이용약관 동의 보기(링크 텍스트) : True',
+            '[ ](필수) 개인정보처리방침 동의 보기(링크 텍스트) : True',
+            '[ ](선택) 마케팅 정보 수신 동의 : True',
+            '<이전(활성화 상태) 버튼 / 다음으로>(default = 비활성화) 버튼 : True'
+        ]
+        check_list = ['이메일로 회원가입', ['안녕하세요! ', '약관에 동의해 주세요'], '네, 모두 동의합니다.', '(필수) 만 14세 이상입니다.', '(필수) 서비스 이용약관 동의', '(필수) 개인정보처리방침 동의', '(선택) 마케팅 정보 수신 동의', ['이전으로', True, '다음으로', False]]
+        unit_result = []
+        try:
+						⬇ 준비(Arrange)
+            #회원가입 1단계 페이지로 이동합니다.
+            CommonFunction(self.driver).move_to_signup_page()
+            singup_page = SignupPage(self.driver)
+            #회원가입 1단계 페이지 로드가 완료될때까지 대기합니다.
+            singup_page.SignupStep1Wait()
+            #회원가입 1단계 페이지의 구성을 텍스트 형태로 가져옵니다.
+						⬇ 실행(Act)
+            check_result = singup_page.GetSignupStep1From()
+            for i, get_result in enumerate(check_result):
+                if check_list[i] == get_result:
+                    unit_result.append(True)
+                else:
+                    unit_result.append(False)
+            print('기대하는 확인 값 : {} \n 가져온 확인 값 : {}'.format(check_list, check_result)) 
+        except:
+            TestOutput(self.driver).resoult_output(self.__class__.__name__, expected_result, None)
+            self.assertTrue(False)
+        try:
+						⬇ 검증(Assert)
+            result = [
+                'Sub Title = 이메일로 회원가입 : {}'.format(unit_result[0]),
+                'Header Title = 안녕하세요!\n약관에 동의해 주세요 : {}'.format(unit_result[1]),
+                '[ ] 네, 모두 동의합니다. : {}'.format(unit_result[2]),
+                '[ ](필수) 만 14세 이상입니다. : {}'.format(unit_result[3]),
+                '[ ](필수) 서비스 이용약관 동의 보기(링크 텍스트) : {}'.format(unit_result[4]),
+                '[ ](필수) 개인정보처리방침 동의 보기(링크 텍스트) : {}'.format(unit_result[5]),
+                '[ ](선택) 마케팅 정보 수신 동의 : {}'.format(unit_result[6]),
+                '<이전(활성화 상태) 버튼 / 다음으로>(default = 비활성화) 버튼 : {}'.format(unit_result[7])
+            ]
+            self.assertEqual(expected_result, result)
+            TestOutput(self.driver).resoult_output(self.__class__.__name__, expected_result, result)
+        except:
+            TestOutput(self.driver).resoult_output(self.__class__.__name__, expected_result, result)
+            self.assertEqual(expected_result, result)
+
+    def test_case_002(self):
+        print('회원가입 - 1단계(약간동의) - <이전 버튼 클릭 시')
+        expected_result = [
+            '버튼 선택 시 "이메일 로그인" 페이지로 이동되어야 합니다. : True' 
+        ]
+        check_list = '이메일 계정으로 계속하기'
+        try:
+						⬇ 준비(Arrange)
+            signup_page = SignupPage(self.driver)
+            #이전으로> 버튼을 클릭합니다.
+            sleep(1)
+            signup_page.PreviousBtnClick()
+            sleep(1)
+            login_page = LoginPage(self.driver)
+            #로그인 페이지 로드가 완료될때까지 대기합니다.
+            login_page.LoginPageWait()
+            #로그인 페이지 구성의 sub_title을 가져옵니다.
+						⬇ 실행(Act)
+            check_result = login_page.GetLoginForm()[0]
+            if check_list == check_result:
+                unit_result = True
+            else:
+                unit_result = False
+            print('기대하는 확인 값 : {} \n 가져온 확인 값 : {}'.format(check_list, check_result)) 
+        except:
+            TestOutput(self.driver).resoult_output(self.__class__.__name__, expected_result, None)
+            self.assertTrue(False)
+        try:
+						⬇ 검증(Assert)
+            result = [
+                '버튼 선택 시 "이메일 로그인" 페이지로 이동되어야 합니다. : {}'.format(unit_result) 
+            ]
+            self.assertEqual(expected_result, result)
+            TestOutput(self.driver).resoult_output(self.__class__.__name__, expected_result, result)
+        except:
+            TestOutput(self.driver).resoult_output(self.__class__.__name__, expected_result, result)
+            self.assertEqual(expected_result, result)
 
 	def test_case_....
 		......
 
-if __name__ == "__main__":
-    unittest.main(testRunner=HTMLTestRunner(
-        combine_reports=True,
-        report_title="이메일 회원가입 테스트 자동화 결과",
-        report_name= SignupFullTest.device_name + "_" + "이메일 회원가입 테스트 자동화 결과" + datetime.datetime.today().strftime("%Y%m%d %H:%M:%S"), 
+
+if __name__ == '__main__':
+     unittest.main(testRunner=HTMLTestRunner(
+        combine_reports=True, 
+        report_title="회원가입 페이지 전체 Test", 
+        report_name= SignupFullTest.__name__ + datetime.datetime.today().strftime("%Y%m%d %H:%M:%S"), 
         add_timestamp=False,
         template='./HtmlTestRunner/template/report_template.html'
-    )
+    ))
 ```
 
 ### Scenario 구조(ex : 회원가입 페이지)
