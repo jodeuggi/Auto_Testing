@@ -1,4 +1,4 @@
-자동화 테스트 자동화
+# 자동화 테스트 자동화
 ## 사용한 기술
 
 ### 프레임워크
@@ -89,12 +89,11 @@ Auto_Testing(Project-Directory)
 ### 테스트 리포트 구성
 
 - Test Case 별로 테스트 결과를 모두 확인이 가능하며, **모든 케이스 결과에 캡처 이미지가 포함**되어 있습니다.
-    
-    ![스크린샷 2023-03-08 오후 7.09.14.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/b90d4230-ed6b-4ddf-a097-8e5b766e626e/%E1%84%89%E1%85%B3%E1%84%8F%E1%85%B3%E1%84%85%E1%85%B5%E1%86%AB%E1%84%89%E1%85%A3%E1%86%BA_2023-03-08_%E1%84%8B%E1%85%A9%E1%84%92%E1%85%AE_7.09.14.png)
+    ![스크린샷 2023-03-08 오후 7 09 14](https://github.com/jodeuggi/Auto_Testing/assets/62323137/f5f372d0-8314-4a49-b8b0-bc47639a5f6a)
+
     
 - **실패한 케이스 대상으로 해당 케이스 결과에 추가로 동영상 캡처를 포함되어 있습니다.**
-    
-    ![스크린샷 2023-03-09 오후 2.54.52.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/c6960d76-e5dc-49ba-bc0e-5cac0295bf3d/%E1%84%89%E1%85%B3%E1%84%8F%E1%85%B3%E1%84%85%E1%85%B5%E1%86%AB%E1%84%89%E1%85%A3%E1%86%BA_2023-03-09_%E1%84%8B%E1%85%A9%E1%84%92%E1%85%AE_2.54.52.png)
+    ![스크린샷 2023-03-09 오후 2 54 52](https://github.com/jodeuggi/Auto_Testing/assets/62323137/f597f906-4dc0-4b79-8e13-654090016e1b)
 
 
 ### 테스트 결과 종류
