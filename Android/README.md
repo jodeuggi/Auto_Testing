@@ -98,6 +98,8 @@ class {page ex : SignupPage}(object):
 	        except:
 	            print('네, 모두 동의합니다 체크 박스 클릭 시 하위 내용을 체크 유무 확인에 실패하였습니다.')
 	            return False
+```
+
 ### Scripts 구조(ex : 회원가입 페이지)
 
 - **AAA 구조 기준으로 작성**
