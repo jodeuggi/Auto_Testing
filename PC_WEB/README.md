@@ -86,7 +86,7 @@ class {page ex : SignupPage}(object):
         """
         회원가입 페이지 로드가 완료 될때까지 대기합니다.
         """
-        return WebDriverWait(self.driver, 10).until(EC.presence_of_element_located(self.agreement_ckb))
+        	return WebDriverWait(self.driver, 10).until(EC.presence_of_element_located(self.agreement_ckb))
 	
 	def GetSignupStep1From(self):
         """
@@ -97,39 +97,39 @@ class {page ex : SignupPage}(object):
         0. 서브 타이틀 / 1,2. 해더 파이틀 / 3. checkbox 첫번째 텍스트 / 4. checkbox 두번째 텍스트 / 5. checkbox 세번째 텍스트
         / 7. checkbox 네번째 텍스트 / 9. checkbox 다섯번째 텍스트 / 10. 이전으로> 버튼 / 11. 다음으로> 버튼 
         """
-        try:
-            result = []
-            signup_step1_area = self.driver.find_element(*self.signup_area).text
-            signup_step1_area_txt = signup_step1_area.split('\n')
-            signup_previous_btn = self.driver.find_element(*self.signup_previous_btn).is_enabled()
-            signup_next_btn = self.driver.find_element(*self.signup_next_btn).is_enabled()
+	        try:
+	            result = []
+	            signup_step1_area = self.driver.find_element(*self.signup_area).text
+	            signup_step1_area_txt = signup_step1_area.split('\n')
+	            signup_previous_btn = self.driver.find_element(*self.signup_previous_btn).is_enabled()
+	            signup_next_btn = self.driver.find_element(*self.signup_next_btn).is_enabled()
+	
+	            return [signup_step1_area_txt[0], [signup_step1_area_txt[1], signup_step1_area_txt[2]], signup_step1_area_txt[3], signup_step1_area_txt[4], signup_step1_area_txt[5], signup_step1_area_txt[7], signup_step1_area_txt[9], [signup_step1_area_txt[10], signup_previous_btn, signup_step1_area_txt[11], signup_next_btn]]
+	        except:
+	            print('회원가입 1단계 구성 요소를 가져오는데 실패하였습니다.')
+	            return False
 
-            return [signup_step1_area_txt[0], [signup_step1_area_txt[1], signup_step1_area_txt[2]], signup_step1_area_txt[3], signup_step1_area_txt[4], signup_step1_area_txt[5], signup_step1_area_txt[7], signup_step1_area_txt[9], [signup_step1_area_txt[10], signup_previous_btn, signup_step1_area_txt[11], signup_next_btn]]
-        except:
-            print('회원가입 1단계 구성 요소를 가져오는데 실패하였습니다.')
-            return False
-
-		def AgreementCkbClick(self, cnt):
+	def AgreementCkbClick(self, cnt):
         """
         회원가입 1단계 페이지의 checkbox(약관 동의)를 cnt를 지정하여 클릭하는 메소드입니다.\n
         cnt 값은 필수로 입력하여야 하며, 아래와같이 cnt를 선언하여 클릭 후, 해당 페이지의 모든 checkbox(총5개)의 check 여부 상태값을 리턴합니다.\n
         cnt=0 : 네 모두 동의합니다. 클릭 / cnt=1 : (필수) 만 14세 이상입니다. 클릭 / cnt=2 : (필수) 서비스 이용약관 동의 클릭 / cnt=3 : (필수) 개인정보처리방침 동의 클릭 / cnt=4 : (선택) 마케팅 정보 수신 동의 클릭
         """
-        try:
-            sleep(0.5)
-            all_agreement_ckb = self.driver.find_elements(*self.agreement_ckb)
-            sleep(0.5)
-            all_agreement_ckb[cnt].click()
-
-            under_agreement_ckb_statsu = []
-            under_agreement_ckb = self.driver.find_elements(*self.agreement_ckb)
-            for i in range(len(under_agreement_ckb)):
-                under_agreement_ckb_statsu.append(under_agreement_ckb[i].is_selected())
-            
-            return under_agreement_ckb_statsu
-        except:
-            print('네, 모두 동의합니다 체크 박스 클릭 시 하위 내용을 체크 유무 확인에 실패하였습니다.')
-            return False
+	        try:
+	            sleep(0.5)
+	            all_agreement_ckb = self.driver.find_elements(*self.agreement_ckb)
+	            sleep(0.5)
+	            all_agreement_ckb[cnt].click()
+	
+	            under_agreement_ckb_statsu = []
+	            under_agreement_ckb = self.driver.find_elements(*self.agreement_ckb)
+	            for i in range(len(under_agreement_ckb)):
+	                under_agreement_ckb_statsu.append(under_agreement_ckb[i].is_selected())
+	            
+	            return under_agreement_ckb_statsu
+	        except:
+	            print('네, 모두 동의합니다 체크 박스 클릭 시 하위 내용을 체크 유무 확인에 실패하였습니다.')
+	            return False
 
 .........
 ```
