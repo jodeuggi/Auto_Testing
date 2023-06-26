@@ -147,14 +147,14 @@ class SignupFullTest(WebDriverSetup):
         check_list = ['이메일로 회원가입', ['안녕하세요! ', '약관에 동의해 주세요'], '네, 모두 동의합니다.', '(필수) 만 14세 이상입니다.', '(필수) 서비스 이용약관 동의', '(필수) 개인정보처리방침 동의', '(선택) 마케팅 정보 수신 동의', ['이전으로', True, '다음으로', False]]
         unit_result = []
         try:
-						⬇ 준비(Arrange)
+		⬇ 준비(Arrange)
             #회원가입 1단계 페이지로 이동합니다.
             CommonFunction(self.driver).move_to_signup_page()
             singup_page = SignupPage(self.driver)
             #회원가입 1단계 페이지 로드가 완료될때까지 대기합니다.
             singup_page.SignupStep1Wait()
             #회원가입 1단계 페이지의 구성을 텍스트 형태로 가져옵니다.
-						⬇ 실행(Act)
+		⬇ 실행(Act)
             check_result = singup_page.GetSignupStep1From()
             for i, get_result in enumerate(check_result):
                 if check_list[i] == get_result:
@@ -166,7 +166,7 @@ class SignupFullTest(WebDriverSetup):
             TestOutput(self.driver).resoult_output(self.__class__.__name__, expected_result, None)
             self.assertTrue(False)
         try:
-						⬇ 검증(Assert)
+		⬇ 검증(Assert)
             result = [
                 'Sub Title = 이메일로 회원가입 : {}'.format(unit_result[0]),
                 'Header Title = 안녕하세요!\n약관에 동의해 주세요 : {}'.format(unit_result[1]),
@@ -190,7 +190,7 @@ class SignupFullTest(WebDriverSetup):
         ]
         check_list = '이메일 계정으로 계속하기'
         try:
-						⬇ 준비(Arrange)
+		⬇ 준비(Arrange)
             signup_page = SignupPage(self.driver)
             #이전으로> 버튼을 클릭합니다.
             sleep(1)
@@ -200,7 +200,7 @@ class SignupFullTest(WebDriverSetup):
             #로그인 페이지 로드가 완료될때까지 대기합니다.
             login_page.LoginPageWait()
             #로그인 페이지 구성의 sub_title을 가져옵니다.
-						⬇ 실행(Act)
+		⬇ 실행(Act)
             check_result = login_page.GetLoginForm()[0]
             if check_list == check_result:
                 unit_result = True
@@ -211,7 +211,7 @@ class SignupFullTest(WebDriverSetup):
             TestOutput(self.driver).resoult_output(self.__class__.__name__, expected_result, None)
             self.assertTrue(False)
         try:
-						⬇ 검증(Assert)
+		⬇ 검증(Assert)
             result = [
                 '버튼 선택 시 "이메일 로그인" 페이지로 이동되어야 합니다. : {}'.format(unit_result) 
             ]
